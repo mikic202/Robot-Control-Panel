@@ -1,6 +1,7 @@
 from UiRobotData import Ui_RobotDataWindow
 import sys
-from PySide2.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow
+import matplotlib.pyplot as plt
 
 
 class RobotDataWindow(QMainWindow):
@@ -8,6 +9,8 @@ class RobotDataWindow(QMainWindow):
         super().__init__(parent)
         self.ui = Ui_RobotDataWindow()
         self.ui.setupUi(self)
+
+    def
 
 
 if __name__ == "__main__":
