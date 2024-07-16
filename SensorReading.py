@@ -2,6 +2,6 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Datapoint:
+class SensorReading:
     angle: float
     value: float
