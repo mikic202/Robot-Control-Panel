@@ -7,6 +7,7 @@ from io import BytesIO
 from DataReader import DataReader
 from DataManipuation.SensorReading import SensorReading
 from DataManipuation.ControlValue import ControlValue
+from DataManipuation.ReadingsDataset import ReadingsDataset
 
 
 def generate_plots(x, y, labels):
@@ -26,7 +27,7 @@ class RobotDataWindow(QMainWindow):
         self.ui = Ui_RobotDataWindow()
         self.ui.setupUi(self)
         # self.draw_plot([1, 2, 3], [1, 2, 3])
-        self.datapoints = {}
+        self.sensor_readings = ReadingsDataset()
         self.control_points = {}
 
     # def draw_plot(self, x, y):
@@ -46,11 +47,12 @@ class RobotDataWindow(QMainWindow):
         self.control_points[datapoint.controll_name].append(datapoint.value)
 
     def draw_sensor_data(self, data):
-        [self.add_sensor_datpoint(reading) for reading in data]
+        self.sensor_readings.add_sensors_data(data)
+        latest_readings = self.sensor_readings.get_latest_data()
         image_data = generate_plots(
-            range(len(list(self.datapoints.values())[0])),
-            self.datapoints.values(),
-            self.datapoints.keys(),
+            range(len(list(latest_readings.values())[0])),
+            latest_readings.values(),
+            latest_readings.keys(),
         )
         pixmap = QPixmap()
         if pixmap.loadFromData(image_data):
