@@ -7,6 +7,7 @@ import json
 
 HOST = "localhost"
 SENSOR_DATA_PORT = 65432
+CONTROL_DATA_PORT = 65433
 
 
 class DataReader:
@@ -16,8 +17,13 @@ class DataReader:
         self.sensor_server.listen()
         self.sensor_connection, _ = self.sensor_server.accept()
 
+        self.control_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.control_server.bind((HOST, CONTROL_DATA_PORT))
+        self.control_server.listen()
+        self.control_connection, _ = self.control_server.accept()
+
     def read_sensor_data(self) -> List[SensorReading]:
-        request = self.sensor_connection.recv(1024)
+        request = self.sensor_connection.recv()
         request = request.decode("utf-8")
         readings = []
         for json_reading in json.loads(request):
@@ -25,4 +31,11 @@ class DataReader:
         return readings
 
     def read_control_values(self) -> List[ControlValue]:
-        return [ControlValue("control", 0.5)]
+        request = self.control_connection.recv()
+        request = request.decode("utf-8")
+        readings = []
+        for json_reading in json.loads(request):
+            readings.append(
+                ControlValue(json_reading["control_name"], json_reading["value"])
+            )
+        return readings
