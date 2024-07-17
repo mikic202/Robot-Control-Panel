@@ -1,6 +1,6 @@
 from typing import List
-from SensorReading import SensorReading
-from ControlValue import ControlValue
+from DataManipuation.SensorReading import SensorReading
+from DataManipuation.ControlValue import ControlValue
 from random import random
 
 

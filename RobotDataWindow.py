@@ -5,8 +5,8 @@ from PyQt5.QtGui import QPixmap
 import matplotlib.pyplot as plt
 from io import BytesIO
 from DataReader import DataReader
-from SensorReading import SensorReading
-from ControlValue import ControlValue
+from DataManipuation.SensorReading import SensorReading
+from DataManipuation.ControlValue import ControlValue
 
 
 def generate_plots(x, y, labels):
