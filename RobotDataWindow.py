@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 from DataReader import DataReader
 from SensorReading import SensorReading
+from ControlValue import ControlValue
 
 
 def generate_plots(x, y, labels):
@@ -26,6 +27,7 @@ class RobotDataWindow(QMainWindow):
         self.ui.setupUi(self)
         # self.draw_plot([1, 2, 3], [1, 2, 3])
         self.datapoints = {}
+        self.control_points = {}
 
     # def draw_plot(self, x, y):
     #     image_data = generate_plot(x, y)
@@ -33,13 +35,18 @@ class RobotDataWindow(QMainWindow):
     #     if pixmap.loadFromData(image_data):
     #         self.ui.sensor_output.setPixmap(pixmap)
 
-    def add_datpoint(self, datapoint: SensorReading):
+    def add_sensor_datpoint(self, datapoint: SensorReading):
         if datapoint.angle not in self.datapoints:
             self.datapoints[datapoint.angle] = []
         self.datapoints[datapoint.angle].append(datapoint.value)
 
+    def add_control_datpoint(self, datapoint: ControlValue):
+        if datapoint.controll_name not in self.control_points:
+            self.control_points[datapoint.controll_name] = []
+        self.control_points[datapoint.controll_name].append(datapoint.value)
+
     def draw_sensor_data(self, data):
-        [self.add_datpoint(reading) for reading in data]
+        [self.add_sensor_datpoint(reading) for reading in data]
         image_data = generate_plots(
             range(len(list(self.datapoints.values())[0])),
             self.datapoints.values(),
@@ -50,8 +57,15 @@ class RobotDataWindow(QMainWindow):
             self.ui.sensor_output.setPixmap(pixmap)
 
     def draw_control_data(self, data):
-        # [self.datapoints.append(reading) for reading in data]
-        pass
+        [self.add_control_datpoint(reading) for reading in data]
+        image_data = generate_plots(
+            range(len(list(self.control_points.values())[0])),
+            self.control_points.values(),
+            self.control_points.keys(),
+        )
+        pixmap = QPixmap()
+        if pixmap.loadFromData(image_data):
+            self.ui.stearing.setPixmap(pixmap)
 
 
 def gui_main(args):
