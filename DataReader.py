@@ -23,19 +23,19 @@ class DataReader:
         self.control_connection, _ = self.control_server.accept()
 
     def read_sensor_data(self) -> List[SensorReading]:
-        request = self.sensor_connection.recv()
+        request = self.sensor_connection.recv(1024)
         request = request.decode("utf-8")
+        print(request)
         readings = []
         for json_reading in json.loads(request):
             readings.append(SensorReading(json_reading["angle"], json_reading["value"]))
         return readings
 
     def read_control_values(self) -> List[ControlValue]:
-        request = self.control_connection.recv()
+        request = self.control_connection.recv(1024)
         request = request.decode("utf-8")
         readings = []
+        print(request)
         for json_reading in json.loads(request):
-            readings.append(
-                ControlValue(json_reading["control_name"], json_reading["value"])
-            )
+            readings.append(ControlValue(json_reading["angle"], json_reading["value"]))
         return readings
