@@ -15,6 +15,8 @@ def generate_plots(x, y, labels):
     plt.clf()
     for y_val, label in zip(y, labels):
         plt.plot(x, y_val, label=label)
+
+    plt.legend(labels)
     buffor = BytesIO()
     plt.savefig(buffor, format="png")
     return buffor.getvalue()
@@ -36,6 +38,11 @@ class RobotDataWindow(QMainWindow):
             latest_readings.values(),
             latest_readings.keys(),
         )
+
+        self.ui.sensors.clear()
+        for reading in latest_readings:
+            self.ui.sensors.addItem(f"{reading}: {latest_readings[reading][-1]}")
+
         pixmap = QPixmap()
         if pixmap.loadFromData(image_data):
             self.ui.sensor_output.setPixmap(pixmap)
@@ -60,9 +67,9 @@ def gui_main(args):
     reader = DataReader()
 
     while window.isVisible():
+        app.processEvents()
         window.draw_sensor_data(reader.read_sensor_data())
         window.draw_control_data(reader.read_control_values())
-        app.processEvents()
 
 
 if __name__ == "__main__":

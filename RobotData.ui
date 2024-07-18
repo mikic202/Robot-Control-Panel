@@ -50,7 +50,7 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QListView" name="listView"/>
+       <widget class="QListWidget" name="sensors"/>
       </item>
      </layout>
     </item>
