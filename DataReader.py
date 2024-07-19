@@ -5,7 +5,7 @@ from random import random
 import socket
 import json
 
-HOST = "localhost"
+HOST = "192.168.0.164"
 SENSOR_DATA_PORT = 65432
 CONTROL_DATA_PORT = 65433
 
@@ -17,10 +17,14 @@ class DataReader:
         self.sensor_server.listen()
         self.sensor_connection, _ = self.sensor_server.accept()
 
+        print("Sensor connection established")
+
         self.control_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.control_server.bind((HOST, CONTROL_DATA_PORT))
         self.control_server.listen()
         self.control_connection, _ = self.control_server.accept()
+
+        print("Control connection established")
 
     def read_sensor_data(self) -> List[SensorReading]:
         request = self.sensor_connection.recv(1024)
