@@ -33,6 +33,8 @@ class RobotDataWindow(QMainWindow):
     def draw_sensor_data(self, data):
         self.sensor_readings.add_sensors_data(data)
         latest_readings = self.sensor_readings.get_latest_data()
+        if len(latest_readings) == 0 or latest_readings is None:
+            return
         image_data = generate_plots(
             range(len(list(latest_readings.values())[0])),
             latest_readings.values(),
