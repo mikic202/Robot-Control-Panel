@@ -41,5 +41,7 @@ class DataReader:
         readings = []
         print(request)
         for json_reading in json.loads(request):
-            readings.append(ControlValue(json_reading["angle"], json_reading["value"]))
+            readings.append(
+                ControlValue(json_reading["control_name"], json_reading["value"])
+            )
         return readings
