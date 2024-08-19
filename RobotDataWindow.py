@@ -1,6 +1,6 @@
 from UiRobotData import Ui_RobotDataWindow
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QCheckBox
 from PyQt5.QtGui import QPixmap
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -33,6 +33,7 @@ class RobotDataWindow(QMainWindow):
         self.ui.ReadingsNumber.valueChanged.connect(self._readings_range_changed)
         self.ui.ReadingsNumber.setValue(self._readings_range)
         self.ui.ReadingsNumber.setMinimum(1)
+        self._readings_to_display = []
 
     def _readings_range_changed(self, value: int):
         self._readings_range = value
@@ -42,19 +43,42 @@ class RobotDataWindow(QMainWindow):
         latest_readings = self.sensor_readings.get_latest_data(self._readings_range)
         if len(latest_readings) == 0 or latest_readings is None:
             return
-        image_data = generate_plots(
-            range(len(list(latest_readings.values())[0])),
-            latest_readings.values(),
-            latest_readings.keys(),
-        )
 
-        self.ui.sensors.clear()
+        readings_to_display_dict = {}
+
         for reading in latest_readings:
-            self.ui.sensors.addItem(f"{reading}: {latest_readings[reading][-1]}")
+            print("_______________")
+            print(reading)
+            print(self._readings_to_display)
+            if reading in self._readings_to_display:
+                readings_to_display_dict[reading] = latest_readings[reading]
 
-        pixmap = QPixmap()
-        if pixmap.loadFromData(image_data):
-            self.ui.sensor_output.setPixmap(pixmap)
+        if len(readings_to_display_dict) != 0:
+            image_data = generate_plots(
+                range(len(list(readings_to_display_dict.values())[0])),
+                readings_to_display_dict.values(),
+                readings_to_display_dict.keys(),
+            )
+
+            pixmap = QPixmap()
+            if pixmap.loadFromData(image_data):
+                self.ui.sensor_output.setPixmap(pixmap)
+
+        if self.ui.readings_checkbox.count() != len(latest_readings.keys()):
+            for i in reversed(range(self.ui.readings_checkbox.count())):
+                self.ui.readings_checkbox.itemAt(i).widget().setParent(None)
+            for i, reading in enumerate(latest_readings):
+                self._readings_to_display.append(reading)
+                checkbox = QCheckBox(str(reading))
+                checkbox.setChecked(True)
+                checkbox.stateChanged.connect(
+                    lambda _, name=reading: (
+                        self._readings_to_display.remove(name)
+                        if name in self._readings_to_display
+                        else self._readings_to_display.append(name)
+                    )
+                )
+                self.ui.readings_checkbox.addWidget(checkbox, i)
 
     def draw_control_data(self, data):
         self.control_points.add_controls_data(data)

@@ -53,7 +53,7 @@
        <widget class="QSpinBox" name="ReadingsNumber"/>
       </item>
       <item>
-       <widget class="QListWidget" name="sensors"/>
+       <layout class="QVBoxLayout" name="readings_checkbox"/>
       </item>
      </layout>
     </item>
