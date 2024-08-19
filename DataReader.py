@@ -31,6 +31,8 @@ class DataReader:
         request = request.decode("utf-8")
         print(request)
         readings = []
+        if request.strip() == "":
+            return readings
         for json_reading in json.loads(request):
             readings.append(SensorReading(json_reading["angle"], json_reading["value"]))
         return readings

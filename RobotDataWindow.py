@@ -29,10 +29,17 @@ class RobotDataWindow(QMainWindow):
         self.ui.setupUi(self)
         self.sensor_readings = ReadingsDataset()
         self.control_points = ControlDataset()
+        self._readings_range = 30
+        self.ui.ReadingsNumber.valueChanged.connect(self._readings_range_changed)
+        self.ui.ReadingsNumber.setValue(self._readings_range)
+        self.ui.ReadingsNumber.setMinimum(1)
+
+    def _readings_range_changed(self, value: int):
+        self._readings_range = value
 
     def draw_sensor_data(self, data):
         self.sensor_readings.add_sensors_data(data)
-        latest_readings = self.sensor_readings.get_latest_data()
+        latest_readings = self.sensor_readings.get_latest_data(self._readings_range)
         if len(latest_readings) == 0 or latest_readings is None:
             return
         image_data = generate_plots(
@@ -51,7 +58,9 @@ class RobotDataWindow(QMainWindow):
 
     def draw_control_data(self, data):
         self.control_points.add_controls_data(data)
-        latest_control_points = self.control_points.get_latest_data()
+        latest_control_points = self.control_points.get_latest_data(
+            self._readings_range
+        )
         image_data = generate_plots(
             range(len(list(latest_control_points.values())[0])),
             latest_control_points.values(),
